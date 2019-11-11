@@ -26,10 +26,19 @@ def get_upload_to_path(instance, filename):
     return path + f'{instance.title_slug}'
 
 
+class City(models.Model):
+    name = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return self.name
+
+    
 class MarketplaceUser(AbstractUser):
     address = models.CharField(max_length=512)
     did_accept_tos = models.BooleanField(default=False, blank=True)
     member_since = models.DateField(auto_now_add=True)
+    address = models.CharField(max_length=1024)
+    city = models.ForeignKey(City, models.SET_NULL, null=True)
 
     @property
     def rating(self):
@@ -49,18 +58,11 @@ class Brand(models.Model):
         return self.name
 
     
-class Location(models.Model):
-    name = models.CharField(max_length=255)
-    
-    def __str__(self):
-        return self.name
-
-    
 class Auction(models.Model):
     title = models.CharField(max_length=255)
     product_condition = models.IntegerField(choices=CONDITION_CHOICES, default=1)
     brand = models.ForeignKey(Brand, models.SET_NULL, blank=True, null=True)
-    location = models.ForeignKey(Location, models.SET_NULL, blank=True, null=True)
+    city = models.ForeignKey(City, models.SET_NULL, null=True)
     duration = models.IntegerField(choices=DURATION_CHOICES, default=30)
     starting_price = models.IntegerField()
     actual_price = models.IntegerField()
@@ -70,9 +72,8 @@ class Auction(models.Model):
     img3 = models.ImageField(upload_to=get_upload_to_path)
 
     seller = models.ForeignKey(MarketplaceUser,
-                               on_delete=models.SET_NULL,
-                               related_name='auctions',
-                               blank=True, null=True)
+                               on_delete=models.CASCADE,
+                               related_name='auctions')
     highest_bidder = models.ForeignKey(MarketplaceUser,
                                        related_name='highest_bids',
                                        on_delete=models.SET_NULL,
@@ -98,10 +99,13 @@ class Auction(models.Model):
         return self.like__set.count()
     
     
-class FKToUserAndAuction(object):
+class FKToUserAndAuction(models.Model):
     auction = models.ForeignKey(Auction, models.SET_NULL, blank=True, null=True)
     marketplaceuser = models.ForeignKey(MarketplaceUser,
                                         models.SET_NULL, blank=True, null=True)
+
+    class Meta:
+        abstract = True
 
     
 class Like(FKToUserAndAuction): pass
@@ -116,10 +120,10 @@ class Review(models.Model):
     review = models.TextField(blank=True, default='')
     seller = models.ForeignKey(MarketplaceUser,
                                related_name='reviewed_by_buyer',
-                               on_delete=models.SET_NULL, blank=True, null=True)
+                               on_delete=models.CASCADE)
     buyer = models.ForeignKey(MarketplaceUser,
                               related_name='reviewed_by_seller',
-                              on_delete=models.SET_NULL, blank=True, null=True)
+                              on_delete=models.SET_NULL, null=True)
 
     
 class TermsOfUse(models.Model):

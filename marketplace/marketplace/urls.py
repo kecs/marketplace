@@ -1,3 +1,6 @@
+from django.conf.urls.static import static
+from django.conf import settings
+
 """marketplace URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -15,7 +18,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from main_app.views import (LandingView, TOSView)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-]
+    path('', LandingView.as_view()),
+    path('tos', TOSView.as_view(), name="tos"),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
