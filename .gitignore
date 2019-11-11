@@ -1,2 +1,4 @@
 env
 *.pyc
+*.emacs.desktop
+*.sqlite3

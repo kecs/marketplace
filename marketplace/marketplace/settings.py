@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # 'users.apps.UsersConfig',
+    'main_app.apps.MainAppConfig',
+    
 ]
 
 MIDDLEWARE = [
@@ -118,3 +122,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'main_app.MarketplaceUser'
+UPLOADS_DIR = 'uploads'
