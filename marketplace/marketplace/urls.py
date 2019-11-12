@@ -17,12 +17,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from main_app.views import (LandingView, TOSView)
+from django.urls import path, include
+from main_app.views import (LandingView, TOSView, SellView)
 
 
 urlpatterns = [
+    path('i18n/', include('django.conf.urls.i18n')), #/i18n/setlang/
     path('admin/', admin.site.urls),
     path('', LandingView.as_view()),
     path('tos', TOSView.as_view(), name="tos"),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('sell', SellView.as_view(), name="sell"),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

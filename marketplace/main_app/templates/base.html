@@ -1,0 +1,114 @@
+{% load i18n %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v3.8.5">
+    <title>{% trans "Marketplace" %}</title>
+
+    <script src="/static/js/jquery.js"></script>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="/static/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="/static/css/font-awesome.css" rel="stylesheet" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/static/css/main.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+  <header class="blog-header py-3">
+    <div class="row flex-nowrap justify-content-between align-items-center">
+      <div class="col-4 pt-1">
+	{% if not user.username %}
+        <a class="text-muted" href="#">{% trans "Log out" %}</a>
+	{% endif %}
+      </div>
+      <div class="col-4 text-center">
+        <a class="blog-header-logo text-dark" href="/">{% trans "Marketplace" %}</a>
+      </div>
+      <div class="col-4 d-flex justify-content-end align-items-center">
+	<span>{% trans "Logged in as" %} <b><i>{{user.username}}&nbsp;</span></i></b>&nbsp;&nbsp;&nbsp;
+
+        <a class="text-muted choose-lang" href="#">
+	  <span class="fa fa-random"></span>
+	  {% get_current_language as LNG %}
+	  {% if LNG == 'en' %}
+	   Magyar
+	  {% else %}
+	   English
+	  {% endif %}
+        </a>
+	
+	{% if not user.username %}
+        <a class="btn btn-sm btn-outline-secondary" href="#">Sign up</a>
+	{% endif %}
+      </div>
+    </div>
+
+    {% if messages %}
+    <div class="alert alert-{{ messages.0.tags }}" role="alert">
+      {{ messages.0 }}
+      <script>
+	window.setTimeout(function(){jQuery('.alert').slideUp(1200);}, 1200);
+      </script>
+    </div>
+    {% endif %}
+    
+  </header>
+
+  <div class="nav-scroller py-1 mb-2">
+    <nav class="nav d-flex justify-content-between">
+      <a class="p-2 text-muted" href="{% url "sell" %}">{% trans 'I want to sell' %}!</a>
+      <a class="p-2 text-muted" href="#">{% trans 'I want to buy' %} <span class="fa fa-search"></span></a>
+    </nav>
+  </div>
+
+  {% block "search" %}
+  {% endblock "search" %}
+
+  {% block "featured" %}
+  {% endblock "featured" %}
+  
+</div>
+
+<main role="main" class="container">
+  <div class="row">
+    {% block "main" %}
+    {% endblock "main" %}
+  </div><!-- /.row -->
+
+</main><!-- /.container -->
+
+<footer class="blog-footer">
+  <p>Template built for <a href="https://getbootstrap.com/">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+  <p>
+    <a href="{% url "tos" %}">{% trans "Terms of use" %}</a>
+  </p>
+</footer>
+
+<script src="/static/js/main.js"></script>
+<form class="hidden-form-1" action="{% url 'set_language' %}" method="post">
+  {% csrf_token %}
+  <input name="next" type="hidden" value="/">
+
+  {% if LNG == 'en' %}
+  <input name="language" type="hidden" value="hu">
+  {% else %}
+  <input name="language" type="hidden" value="en">
+  {% endif %}
+</form>
+
+
+
+<!--
+{% debug %}
+  -->
+
+</body>
+</html>

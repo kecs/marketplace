@@ -2,3 +2,4 @@ env
 *.pyc
 *.emacs.desktop
 *.sqlite3
+uploads

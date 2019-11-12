@@ -62,18 +62,19 @@ class Auction(models.Model):
     title = models.CharField(max_length=255)
     product_condition = models.IntegerField(choices=CONDITION_CHOICES, default=1)
     brand = models.ForeignKey(Brand, models.SET_NULL, blank=True, null=True)
-    city = models.ForeignKey(City, models.SET_NULL, null=True)
+    city = models.ForeignKey(City, models.SET_NULL, null=True, blank=True)
     duration = models.IntegerField(choices=DURATION_CHOICES, default=30)
     starting_price = models.IntegerField()
-    actual_price = models.IntegerField()
-    start_date = models.DateField()
-    img1 = models.ImageField(upload_to=get_upload_to_path)
-    img2 = models.ImageField(upload_to=get_upload_to_path)
-    img3 = models.ImageField(upload_to=get_upload_to_path)
+    actual_price = models.IntegerField(blank=True, null=True, default=0)
+    start_date = models.DateField(auto_now_add=True)
+    img1 = models.ImageField(upload_to='uploads/')
+    img2 = models.ImageField(upload_to=get_upload_to_path, blank=True, null=True)
+    img3 = models.ImageField(upload_to=get_upload_to_path, blank=True, null=True)
 
     seller = models.ForeignKey(MarketplaceUser,
                                on_delete=models.CASCADE,
-                               related_name='auctions')
+                               related_name='auctions',
+                               blank=True, null=True)
     highest_bidder = models.ForeignKey(MarketplaceUser,
                                        related_name='highest_bids',
                                        on_delete=models.SET_NULL,

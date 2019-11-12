@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block "search" %}
+<div class="jumbotron p-4 p-md-5 text-white rounded bg-search text-dark">
+  <div class="col-md-6 px-0">
+    <p class="display-5">{% trans "Describe the item you are selling" %}!</p>
+    <form enctype="multipart/form-data" method="post">{% csrf_token %}
+      {{ form.as_p }}
+      -------------------
+      {{ form_errors }}
+      <button type="submit" class="btn btn-success">{% trans "Sell item" %}!</button>
+    </form>
+    <p class="lead mb-0"><a href="/" class="font-weight-bold">Back</a></p>
+  </div>
+</div>
+{% endblock "search" %}
