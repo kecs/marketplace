@@ -18,7 +18,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from main_app.views import (LandingView, TOSView, SellView, ProductDetailView)
+from main_app.views import (LandingView, TOSView, SellView,
+                            ProductDetailView, WatchView, LikeView)
 
 
 urlpatterns = [
@@ -28,6 +29,8 @@ urlpatterns = [
     path('tos', TOSView.as_view(), name="tos"),
     path('sell', SellView.as_view(), name="sell"),
     path('product_detail/<int:pk>/', ProductDetailView.as_view(), name="product_detail"),
+    path('watch/<int:pk>/', WatchView.as_view(), name="watch"),
+    path('like/<int:pk>/', LikeView.as_view(), name="like"),
 ]
 
 if settings.DEBUG:

@@ -131,7 +131,13 @@ class Auction(models.Model):
     @property
     def likes(self):
         return self.like_set.count()
+
+    def is_liked_by_user(self, user):
+        return self.like_set.filter(marketplaceuser=user).count()
     
+    def is_watched_by_user(self, user):
+        return self.watch_set.filter(marketplaceuser=user).count()
+
     
 class FKToUserAndAuction(models.Model):
     auction = models.ForeignKey(Auction, models.SET_NULL, blank=True, null=True)
@@ -140,6 +146,9 @@ class FKToUserAndAuction(models.Model):
 
     class Meta:
         abstract = True
+
+    def __str__(self):
+        return f'{self.marketplaceuser} : {self.auction}'
 
     
 class Like(FKToUserAndAuction): pass
