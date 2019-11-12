@@ -1,10 +1,12 @@
 # from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
+from django.views.generic.detail import DetailView
 from django.contrib import messages
 from django.utils.translation import gettext as _
 
 from .forms import AuctionForm
+from .models import Auction
 
 
 class TOSView(TemplateView):
@@ -16,7 +18,7 @@ class LandingView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['latest_articles'] = 69
+        context['featured_items'] = Auction.objects.open()[:4]
         return context
 
 
@@ -32,3 +34,8 @@ class SellView(CreateView):
         messages.success(self.request, _('Item successfully uploaded!'))
 
         return super().form_valid(form)
+
+
+class ProductDetailView(DetailView):
+    model = Auction
+    template_name = 'detail.html'

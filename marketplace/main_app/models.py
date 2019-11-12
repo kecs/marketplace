@@ -1,10 +1,14 @@
-from datetime import timedelta, datetime
+from datetime import timedelta, date, datetime
 from django.utils.text import slugify
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext as _
+from django.db.models import Q
+from django.template.defaultfilters import truncatewords
 
+
+# Utils
 
 CONDITION_CHOICES = (
     (1, _("New")),
@@ -20,11 +24,22 @@ DURATION_CHOICES = (
     (15, _("One week")),
 )
 
+
+class AuctionManager(models.Manager):
+    def open(self, *args, **kwargs):
+        now = datetime.now()
+        objects = super().get_queryset(*args, **kwargs)
+        return objects.filter(Q(Q(duration=30) & Q(start_date__gte=now - timedelta(days=30))) |
+                              Q(Q(duration=60) & Q(start_date__gte=now - timedelta(days=60))) |
+                              Q(Q(duration=15) & Q(start_date__gte=now - timedelta(days=15))))
+    
 def get_upload_to_path(instance, filename):
     path = f'{settings.UPLOADS_DIR}/auction_'
     path += f'{datetime.now().strftime("%Y_%m_%d")}_'
-    return path + f'{instance.title_slug}'
+    path += f'{instance.title_slug}_'
+    return path + filename
 
+# Models
 
 class City(models.Model):
     name = models.CharField(max_length=255)
@@ -58,8 +73,9 @@ class Brand(models.Model):
         return self.name
 
     
-class Auction(models.Model):
+class Auction(models.Model):    
     title = models.CharField(max_length=255)
+    description = models.TextField()
     product_condition = models.IntegerField(choices=CONDITION_CHOICES, default=1)
     brand = models.ForeignKey(Brand, models.SET_NULL, blank=True, null=True)
     city = models.ForeignKey(City, models.SET_NULL, null=True, blank=True)
@@ -67,10 +83,9 @@ class Auction(models.Model):
     starting_price = models.IntegerField()
     actual_price = models.IntegerField(blank=True, null=True, default=0)
     start_date = models.DateField(auto_now_add=True)
-    img1 = models.ImageField(upload_to='uploads/')
+    img1 = models.ImageField(upload_to=get_upload_to_path)
     img2 = models.ImageField(upload_to=get_upload_to_path, blank=True, null=True)
     img3 = models.ImageField(upload_to=get_upload_to_path, blank=True, null=True)
-
     seller = models.ForeignKey(MarketplaceUser,
                                on_delete=models.CASCADE,
                                related_name='auctions',
@@ -79,7 +94,25 @@ class Auction(models.Model):
                                        related_name='highest_bids',
                                        on_delete=models.SET_NULL,
                                        blank=True, null=True)
+    objects = AuctionManager()
 
+    def get_upload_to_path(self, filename):
+        path = f'{settings.UPLOADS_DIR}/auction_'
+        path += f'{datetime.now().strftime("%Y_%m_%d")}_'
+        path += f'{self.title_slug}_'
+        return path + filename
+
+    @property
+    def open_until(self):
+        return self.start_date + timedelta(days=self.duration)
+    
+    @property
+    def short_description(self):
+        if len(self.description) > 100:
+            return truncatewords(self.description, 15) + ' ...'
+        else:
+            return self.description
+    
     @property
     def title_slug(self):
         return slugify(self.title)
@@ -93,11 +126,11 @@ class Auction(models.Model):
 
     @property
     def watchers(self):
-        return self.watch__set.count()
+        return self.watch_set.count()
     
     @property
     def likes(self):
-        return self.like__set.count()
+        return self.like_set.count()
     
     
 class FKToUserAndAuction(models.Model):

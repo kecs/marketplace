@@ -4,6 +4,10 @@
 
 .bg-search{background-color: #f5f5f5;}
 
+img.img-detail{
+    margin: 0 25px 25px 0;
+}
+
 .hidden-form-1{
     width: 1p;
     height: 1p;

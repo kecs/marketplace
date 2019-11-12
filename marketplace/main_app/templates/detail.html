@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block "search" %}
+<div class="jumbotron p-4 p-md-5 rounded bg-search">
+  <div class="col-md-6 px-0">
+    <h1 class="display-5">{{ object.title }}</h1>
+    <p><div style="width: 200px" class="float-left detail-div-200">{% trans "auction started at"|capfirst %}</div> <b >{{ object.start_date }}</b></p>
+    <p><div style="width: 200px" class="float-left detail-div-200">{% trans "open until"|capfirst %}</div> <b>{{ object.open_until }}</b> </p>
+    <p><div style="width: 200px" class="float-left detail-div-200">{% trans "likes"|capfirst %}</div> <b>{{ object.likes }}</b> </p>
+    <p><div style="width: 200px" class="float-left detail-div-200">{% trans "watching"|capfirst %}</div> <b>{{ object.watchers }}</b> </p>
+    <button type="button" class="btn btn-primary btn-sm">{% trans "watch"|capfirst %}</button>&nbsp;&nbsp;&nbsp;
+    <button type="button" class="btn btn-primary btn-sm">{% trans "like"|capfirst %}</button>
+    <hr/>
+    <p class="lead my-3">{{ object.description }}</p>
+    <br/>
+    
+    <img class="img-detail float-left" alt="" src="/{{ object.img1.url }}" width=200 height=250 />
+    {% if object.img2 %}
+    <img class="img-detail float-left" alt="" src="/{{ object.img2.url }}" width=200 height=250 />
+    {% endif %}
+    {% if object.img3 %}
+    <img class="img-detail float-left" alt="" src="/{{ object.img3.url }}" width=200 height=250 />
+    {% endif %}
+
+    <div class="clearfix">&nbsp;</div>
+    <br/>
+    <br/>
+    <br/>
+    <p class="lead mb-0"><a href="javascript:window.history.back();" class="font-weight-bold">{% trans "back"|capfirst %}</a></p>
+  </div>
+</div>
+{% endblock "search" %}
+
+{% block "featured" %}
+{% endblock "featured" %}
+
+

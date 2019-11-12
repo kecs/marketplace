@@ -55,7 +55,7 @@
     <div class="alert alert-{{ messages.0.tags }}" role="alert">
       {{ messages.0 }}
       <script>
-	window.setTimeout(function(){jQuery('.alert').slideUp(1200);}, 1200);
+	window.setTimeout(function(){jQuery('.alert').slideUp(1500);}, 2500);
       </script>
     </div>
     {% endif %}
@@ -71,6 +71,13 @@
 
   {% block "search" %}
   {% endblock "search" %}
+
+  {% if featured_items %}
+  <br/>
+  <br/>
+  <br/>
+  <h2>{% trans 'Latest auctions' %}</h2>
+  {% endif %}
 
   {% block "featured" %}
   {% endblock "featured" %}

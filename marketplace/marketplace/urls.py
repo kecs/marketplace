@@ -18,7 +18,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from main_app.views import (LandingView, TOSView, SellView)
+from main_app.views import (LandingView, TOSView, SellView, ProductDetailView)
 
 
 urlpatterns = [
@@ -27,7 +27,9 @@ urlpatterns = [
     path('', LandingView.as_view()),
     path('tos', TOSView.as_view(), name="tos"),
     path('sell', SellView.as_view(), name="sell"),
+    path('product_detail/<int:pk>/', ProductDetailView.as_view(), name="product_detail"),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.UPLOADS_DIR, document_root=settings.UPLOADS_DIR)
