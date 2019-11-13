@@ -4,6 +4,10 @@
 
 .bg-search{background-color: #f5f5f5;}
 
+.bid-margin-right{margin-right: 12px;}
+
+.place-bid-inp{width: 120px;}
+
 img.img-detail{
     margin: 0 25px 25px 0;
 }

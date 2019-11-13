@@ -8,24 +8,34 @@
     <h1 class="display-5">{{ object.title }}</h1>
     <p><div style="width: 200px" class="float-left detail-div-200">{% trans "auction started at"|capfirst %}</div> <b >{{ object.start_date }}</b></p>
     <p><div style="width: 200px" class="float-left detail-div-200">{% trans "open until"|capfirst %}</div> <b>{{ object.open_until }}</b> </p>
+    <p><div style="width: 200px" class="float-left detail-div-200">{% trans "starting price"|capfirst %}</div> <b >{{ object.starting_price }} Ft</b></p>
+    <p><div style="width: 200px" class="float-left detail-div-200">{% trans "current highest bid"|capfirst %}</div> <b>{{ object.actual_price }} Ft</b> </p>
+    <p><div style="width: 200px" class="float-left detail-div-200">{% trans "seller"|capfirst %}</div> <b>{{ object.seller.username }} [{{ object.seller.rating }}] &#11088;</b> </p>
     <p><div style="width: 200px" class="float-left detail-div-200">{% trans "likes"|capfirst %}</div> <b>{{ object.likes }}</b> </p>
     <p><div style="width: 200px" class="float-left detail-div-200">{% trans "watching"|capfirst %}</div> <b>{{ object.watchers }}</b> </p>
     
     {% is_watched_by_user object user %}
     {% is_liked_by_user object user %}
 
-    <a data-pk="{{ pk }}"
-       data-verb="{{ verb }}"
-       data-csrf="{{ csrf_token }}"
-       href="#"
+    <a href="#"
        type="a"
-       class="send-like-watch btn btn-primary btn-sm"
+       class="show-send-bid btn btn-primary btn-sm float-left bid-margin-right"
        role="button">{% trans 'place bid'|capfirst %}</a>&nbsp;&nbsp;&nbsp;
 
-    <br />
-    <a>
-      <input type="number" name="starting_price" class="numberinput form-control" required="" id="bid">
-    </a>
+    <div class="float-left place-bid-inp bid-margin-right" style="display:none">
+      <input placeholder="Ft" type="number" name="starting_price" class="numberinput form-control form-control-sm" required="" id="bid">
+    </div>
+
+    <a data-confirm="{% trans "Really want to place bid?" %}"
+       data-csrf="{{ csrf_token }}"
+       data-current-price="{{ object.actual_price }}"
+       href="#"
+       type="a"
+       style="display:none"
+       class="btn btn-primary btn-sm float-left bid-margin-right place-bid-send"
+       role="button">{% trans 'send bid'|capfirst %}</a>&nbsp;&nbsp;&nbsp;
+    
+    <div class="clearfix">&nbsp;</div>
     
     <hr/>
     <p class="lead my-3">{{ object.description }}</p>

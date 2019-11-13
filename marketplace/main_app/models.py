@@ -57,10 +57,12 @@ class MarketplaceUser(AbstractUser):
 
     @property
     def rating(self):
-        reviews = self.review__set.objects.all()
+        reviews = self.reviewed_by_buyer.all()
         ratings_count = len(reviews)
         if ratings_count:
-            return sum([r.value for r in reviews]) / ratings_count
+            return sum([r.stars for r in reviews]) / ratings_count
+        else:
+            return 0
     
     def __str__(self):
         return self.username
@@ -80,8 +82,8 @@ class Auction(models.Model):
     brand = models.ForeignKey(Brand, models.SET_NULL, blank=True, null=True)
     city = models.ForeignKey(City, models.SET_NULL, null=True, blank=True)
     duration = models.IntegerField(choices=DURATION_CHOICES, default=30)
-    starting_price = models.IntegerField()
-    actual_price = models.IntegerField(blank=True, null=True, default=0)
+    starting_price = models.PositiveIntegerField()
+    actual_price = models.PositiveIntegerField(blank=True, null=True, default=0)
     start_date = models.DateField(auto_now_add=True)
     img1 = models.ImageField(upload_to=get_upload_to_path)
     img2 = models.ImageField(upload_to=get_upload_to_path, blank=True, null=True)

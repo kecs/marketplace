@@ -25,4 +25,36 @@ jQuery(function(){
       }
     });
   });
+
+  // Show "send bid" button
+  $('.show-send-bid').click(function(){
+    $('.place-bid-inp').show();
+    $('.place-bid-send').show();
+  });
+
+  // Send bid
+  $('.place-bid-send').click(function(e){
+    var actualPrice = parseInt($(e.target).data('actual-price')),
+	usersBid = parseInt($('.place-bid-inp').value());
+
+    console.log(actualPrice, usersBid)
+	
+    // if()
+    
+    if(confirm($(e.target).data('confirm'))){
+      $.ajax({
+	url : url,
+	type: "POST",
+	data : {csrfmiddlewaretoken: csrf},
+	dataType : "json",
+	success: function( data ){
+          window.location.reload();
+	}
+      });
+    }else{
+      $('.place-bid-inp').hide();
+      $('.place-bid-send').hide();
+    };
+  });
+  
 });
