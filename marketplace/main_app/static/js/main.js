@@ -34,23 +34,16 @@ jQuery(function(){
 
   // Send bid
   $('.place-bid-send').click(function(e){
-    var actualPrice = parseInt($(e.target).data('actual-price')),
-	usersBid = parseInt($('.place-bid-inp').value());
+    var $bidInput = $('#bid'),
+	startingPrice = $bidInput.data('startingprice'),
+	currentPrice = $bidInput.data('currentprice'),
+	bid = parseInt($('#bid').val());
 
-    console.log(actualPrice, usersBid)
-	
-    // if()
+    $('#submit-bid').val(bid);
+    
     
     if(confirm($(e.target).data('confirm'))){
-      $.ajax({
-	url : url,
-	type: "POST",
-	data : {csrfmiddlewaretoken: csrf},
-	dataType : "json",
-	success: function( data ){
-          window.location.reload();
-	}
-      });
+      $('#bid-form').submit();
     }else{
       $('.place-bid-inp').hide();
       $('.place-bid-send').hide();

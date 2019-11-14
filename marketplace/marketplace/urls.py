@@ -19,18 +19,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from main_app.views import (LandingView, TOSView, SellView,
-                            ProductDetailView, WatchView, LikeView)
+                            ProductDetailView, WatchView, LikeView, BidView)
 
 
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')), #/i18n/setlang/
     path('admin/', admin.site.urls),
-    path('', LandingView.as_view()),
     path('tos', TOSView.as_view(), name="tos"),
     path('sell', SellView.as_view(), name="sell"),
     path('product_detail/<int:pk>/', ProductDetailView.as_view(), name="product_detail"),
     path('watch/<int:pk>/', WatchView.as_view(), name="watch"),
     path('like/<int:pk>/', LikeView.as_view(), name="like"),
+    path('bid/<int:pk>/', BidView.as_view(), name="bid"),
+    path('', LandingView.as_view(), name='landing'),
 ]
 
 if settings.DEBUG:

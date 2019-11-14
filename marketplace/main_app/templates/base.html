@@ -52,12 +52,15 @@
     </div>
 
     {% if messages %}
-    <div class="alert alert-{{ messages.0.tags }}" role="alert">
-      {{ messages.0 }}
-      <script>
-	window.setTimeout(function(){jQuery('.alert').slideUp(1500);}, 2500);
-      </script>
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-{{ message.extra_tags }}" role="alert">
+      {{ message }} {{ message.tags }} {{ message.extra_tags }}
     </div>
+    {% endfor %}
+    <script>
+      window.setTimeout(function(){jQuery('.alert').slideUp(1500);}, 2500);
+      window.scrollTo(0, 0);
+    </script>
     {% endif %}
     
   </header>
