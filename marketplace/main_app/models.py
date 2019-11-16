@@ -107,6 +107,12 @@ class Auction(models.Model):
     @property
     def open_until(self):
         return self.start_date + timedelta(days=self.duration)
+
+    @property
+    def is_open(self):
+        now = datetime.now().date()
+        end = self.start_date + timedelta(days=self.duration)
+        return end <= now
     
     @property
     def short_description(self):

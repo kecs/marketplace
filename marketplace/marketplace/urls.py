@@ -18,7 +18,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from main_app.views import (LandingView, TOSView, SellView,
+from main_app.views import (LandingView, TOSView, SellView, AuctionListView,
                             ProductDetailView, WatchView, LikeView, BidView)
 
 
@@ -31,6 +31,7 @@ urlpatterns = [
     path('watch/<int:pk>/', WatchView.as_view(), name="watch"),
     path('like/<int:pk>/', LikeView.as_view(), name="like"),
     path('bid/<int:pk>/', BidView.as_view(), name="bid"),
+    path('search/', AuctionListView.as_view(), name="search"),
     path('', LandingView.as_view(), name='landing'),
 ]
 

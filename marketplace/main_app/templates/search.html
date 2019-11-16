@@ -1,17 +1,48 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load crispy_forms_tags %}
 
 {% block "search" %}
-<div class="jumbotron p-4 p-md-5 text-white rounded bg-search">
+<div class="jumbotron p-4 p-md-5 rounded bg-search">
   <div class="col-md-6 px-0">
-    <h1 class="display-4 font-italic">Title of a longer featured blog post</h1>
-    <p class="lead my-3">Multiple lines of text that form the lede, informing new readers quickly and efficiently about what’s most interesting in this post’s contents.</p>
-    <p class="lead mb-0"><a href="#" class="text-white font-weight-bold">Continue reading...</a></p>
+    <h1 class="display-5">{% trans "search items"|capfirst %}</h1>
+    <!-- <p><div style="width: 200px" class="float-left detail-div-200">{% trans "auction started at"|capfirst %}</div> <b >{{ object.start_date }}</b></p> -->
+    <br/>
+    <form method="GET" action="{% url "search" %}">
+      {{ form|crispy }}
+      <button type="submit" class="btn btn-primary">{% trans "search"|capfirst %}</button>
+    </form>
   </div>
 </div>
 {% endblock "search" %}
 
 {% block "featured" %}
+<div class="row mb-2">  
+  {% for item in object_list %}
+  {% include "item_box.inc.html" %}
+  {% endfor %}
+  
+</div>
 {% endblock "featured" %}
 
+{% block "main" %}
+<div class="col-md-8 blog-main">
+  <h3 class="pb-4 mb-4 font-italic border-bottom">
+    {% trans 'Project Marketplace' %}
+  </h3>
+
+
+  <div class="blog-post">
+    <h2 class="blog-post-title">{% trans "About Project Marketplace" %}</h2>
+    <p class="blog-post-meta">2019&nbsp; <a href="https://github.com/kecs">Mihaly Gabor</a></p>
+
+    <p class="text-justify">Az alkalmazás lehetőséget ad felhasználók regisztrációjára, valamint
+      a regisztrált felhasználók közti licit alapú kereskedelemre. A felhasználónak lehetősége van egy terméket,
+      annak leírásával, képével, egyéb paramétereivel licitre bocsátani egy megadott kikiáltási áron. A
+licitre bocsátott termékek kategóriánként kereshetők, valamint liciteket lehet rájuk elhelyezni, a licit
+idejének lejártával a győztes vevő és az eladó is érdesítést kap a rendszertől, létrejöhet az átadás-átvétel.</p>
+    <hr>
+
+</div><!-- /.blog-main -->
+{% endblock "main" %}
 

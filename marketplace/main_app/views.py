@@ -2,6 +2,7 @@
 from django.views.generic import View, TemplateView
 from django.views.generic.edit import CreateView
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.http import JsonResponse, HttpResponseRedirect
@@ -10,18 +11,58 @@ from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse
 from django.shortcuts import render_to_response
 
-from .forms import AuctionForm
+from .forms import AuctionForm, SearchForm
 from .models import Auction, Like, Watch
-
-
-class TOSView(TemplateView):
-    template_name = "tos.html"
 
 
 class BaseMixin(LoginRequiredMixin, SingleObjectMixin):
     pass
 
 
+class TOSView(TemplateView):
+    template_name = "tos.html"
+
+
+class AuctionListView(LoginRequiredMixin, ListView):
+    model = Auction
+    template_name = 'search.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx.update({'form': SearchForm(self.request.GET)})
+        return ctx
+
+    def updateQuery(self, name, q, _int=False):
+        if _int:
+            field = int(self.request.GET.get(name) or '0')
+        else:
+            field = self.request.GET.get(name).strip()
+            
+        if field:
+            self.query.update({q: field})
+    
+    def get_queryset(self):
+        self.query = {}
+
+        # TODO: differentiate bw act pr and not having act pr, union 2 sep queries
+        
+        if self.actual_price:
+            price_param = 'actual_price'
+        else:
+            price_param = 'starting_price'
+            
+        query_params = (('title', 'title__icontains', False),
+                        ('price_from', price_param + '__gte', True),
+                        ('price_to', price_param + '__lte', True),
+                        ('brand', 'brand__name__icontains', False),
+                        ('city', 'city__name__icontains', False), )
+        
+        for title, param, _int in query_params:
+            self.updateQuery(title, param, _int)
+
+        return Auction.objects.open().filter(**self.query).order_by('-start_date')
+            
+    
 class LikeOrWatchView(BaseMixin, View):
     model = Auction
     
@@ -56,8 +97,6 @@ class BidView(BaseMixin, View):
     def post(self, *args, **kwargs):
         bid = int(self.request.POST.get('bid', '0'))
         self.object = self.get_object(self.get_queryset())
-
-        # TODO: do not update closed auction!
         
         # No bid
         if not bid:
@@ -69,8 +108,13 @@ class BidView(BaseMixin, View):
                 messages.error(self.request,
                                _('Your bid has to be higher than the current highest bid!'), extra_tags='danger')
                 return self.respond(self.object.id)
-            # Winner
             else:
+                # Do not update closed auction!
+                if not object.is_open:
+                    messages.error(self.request, _('Auction is over!'), extra_tags='danger')
+                    return self.respond(self.object.id)
+                
+                # Highest bidder
                 self.object.highest_bidder = self.request.user
                 self.object.actual_price = bid
                 self.object.save()

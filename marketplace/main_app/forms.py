@@ -1,12 +1,23 @@
 from datetime import date
 
-from django.forms import ModelForm, CharField
+from django.forms import Form, ModelForm, CharField, IntegerField
+from django.utils.translation import gettext as _
 
 from .models import MarketplaceUser, Auction, City, Brand
 
 
+class SearchForm(Form):
+    title = CharField(required=False, label=_('I am searching for'))
+    brand = CharField(required=False)
+    city = CharField(required=False)
+    price_from = IntegerField(required=False,
+                              label=_('Price from'))
+    price_to = IntegerField(required=False,
+                            label=_('Price to'))
+
+
 class AuctionForm(ModelForm):
-    brand = CharField()
+    brand = CharField(required=False)
     city = CharField()
 
     def clean(self):

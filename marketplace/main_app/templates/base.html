@@ -54,7 +54,7 @@
     {% if messages %}
     {% for message in messages %}
     <div class="alert alert-{{ message.tags }} alert-{{ message.extra_tags }}" role="alert">
-      {{ message }} {{ message.tags }} {{ message.extra_tags }}
+      {{ message }}
     </div>
     {% endfor %}
     <script>
@@ -68,7 +68,7 @@
   <div class="nav-scroller py-1 mb-2">
     <nav class="nav d-flex justify-content-between">
       <a class="p-2 text-muted" href="{% url "sell" %}">{% trans 'I want to sell' %}!</a>
-      <a class="p-2 text-muted" href="#">{% trans 'I want to buy' %} <span class="fa fa-search"></span></a>
+      <a class="p-2 text-muted" href="{% url "search" %}">{% trans 'I want to buy' %} <span class="fa fa-search"></span></a>
     </nav>
   </div>
 
