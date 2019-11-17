@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load extras %}
+
+{% block "search" %}
+{% with user=object %}
+<div class="jumbotron p-4 p-md-5 rounded bg-search">
+  <div class="col-md-6 px-0">
+    <h1 class="display-5">{{ user.username }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ user.city.name|capfirst }}, {{ user.address|capfirst }}</h1>
+    <p>{{ user.email }}</p>
+    <br/>
+    <p><b>{% trans "auctions I watch"|capfirst %}:</b></p>
+    <ul>
+      {% for auction in watched_auctions %}
+      <li><a href="{{ auction.get_absolute_url }}">{{ auction.title }}</a>&nbsp;&nbsp; {% trans "open until"|capfirst %}:&nbsp; {{ auction.open_until }}</li>
+      {% endfor %}
+    </ul>
+    
+    <p><b>{% trans "auctions I like"|capfirst %}:</b></p>
+    <ul>
+      {% for auction in liked_auctions %}
+      <li><a href="{{ auction.get_absolute_url }}">{{ auction.title }}</a>&nbsp;&nbsp; {% trans "open until"|capfirst %}:&nbsp; {{ auction.open_until }}</li>
+      {% endfor %}
+    </ul>
+
+    <br/>
+    <br/>
+    <br/>
+    <p class="lead mb-0"><a href="javascript:window.history.back();" class="font-weight-bold">{% trans "back"|capfirst %}</a></p>
+  </div>
+</div>
+{% endwith %}
+{% endblock "search" %}
+
+{% block "featured" %}
+{% endblock "featured" %}
+

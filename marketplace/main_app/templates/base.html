@@ -33,7 +33,7 @@
         <a class="blog-header-logo text-dark" href="/">{% trans "Marketplace" %}</a>
       </div>
       <div class="col-4 d-flex justify-content-end align-items-center">
-	<span>{% trans "Logged in as" %} <b><i>{{user.username}}&nbsp;</span></i></b>&nbsp;&nbsp;&nbsp;
+	<span>{% trans "Logged in as" %} <b><a href="{% url "profile" %}"><i>{{user.username}}&nbsp;</span></i></a></b>&nbsp;&nbsp;&nbsp;
 
         <a class="text-muted choose-lang" href="#">
 	  <span class="fa fa-random"></span>

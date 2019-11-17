@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.shortcuts import render_to_response
 
 from .forms import AuctionForm, SearchForm
-from .models import Auction, Like, Watch
+from .models import (Auction, Like, Watch, MarketplaceUser)
 
 
 class BaseMixin(LoginRequiredMixin, SingleObjectMixin):
@@ -32,35 +32,33 @@ class AuctionListView(LoginRequiredMixin, ListView):
         ctx.update({'form': SearchForm(self.request.GET)})
         return ctx
 
-    def updateQuery(self, name, q, _int=False):
-        if _int:
-            field = int(self.request.GET.get(name) or '0')
-        else:
-            field = self.request.GET.get(name).strip()
+    def updateQuery(self, name, q):
+        field = self.request.GET.get(name, '').strip()
             
         if field:
             self.query.update({q: field})
-    
+
+    def get_price(self, from_or_to):
+        return int(self.request.GET.get(f'price_{from_or_to}') or '0')
+            
     def get_queryset(self):
         self.query = {}
-
-        # TODO: differentiate bw act pr and not having act pr, union 2 sep queries
+        price_query = {}
+        price_from, price_to = [self.get_price(ft) for ft in ('from', 'to')]
         
-        if self.actual_price:
-            price_param = 'actual_price'
-        else:
-            price_param = 'starting_price'
+        if price_from:
+            price_query.update({'price_gte': price_from})
+        if price_to:
+            price_query.update({'price_lte': price_to})
             
-        query_params = (('title', 'title__icontains', False),
-                        ('price_from', price_param + '__gte', True),
-                        ('price_to', price_param + '__lte', True),
-                        ('brand', 'brand__name__icontains', False),
-                        ('city', 'city__name__icontains', False), )
-        
-        for title, param, _int in query_params:
-            self.updateQuery(title, param, _int)
+        query_params = (('title', 'title__icontains'),
+                        ('brand', 'brand__name__icontains'),
+                        ('city', 'city__name__icontains'), )
 
-        return Auction.objects.open().filter(**self.query).order_by('-start_date')
+        [self.updateQuery(title, param) for title, param in query_params]
+        
+        return Auction.objects.real_price(**price_query)\
+                      .filter(**self.query).order_by('-start_date')
             
     
 class LikeOrWatchView(BaseMixin, View):
@@ -155,3 +153,20 @@ class SellView(LoginRequiredMixin, CreateView):
 class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Auction
     template_name = 'detail.html'
+
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = MarketplaceUser
+    template_name = 'profile.html'
+
+    def get_object(self):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['watched_auctions'] = Auction.objects.open()\
+                .filter(watch__marketplaceuser=self.request.user)
+        context['liked_auctions'] = Auction.objects.open()\
+                .filter(like__marketplaceuser=self.request.user)
+        return context
+

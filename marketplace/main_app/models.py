@@ -1,6 +1,7 @@
 from datetime import timedelta, date, datetime
 from django.utils.text import slugify
 from django.db import models
+from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext as _
@@ -26,12 +27,33 @@ DURATION_CHOICES = (
 
 
 class AuctionManager(models.Manager):
-    def open(self, *args, **kwargs):
+    def q_open(self):
         now = datetime.now()
-        objects = super().get_queryset(*args, **kwargs)
-        return objects.filter(Q(Q(duration=30) & Q(start_date__gte=now - timedelta(days=30))) |
-                              Q(Q(duration=60) & Q(start_date__gte=now - timedelta(days=60))) |
-                              Q(Q(duration=15) & Q(start_date__gte=now - timedelta(days=15))))
+
+        # Still valid, according to duration
+        return Q(Q(Q(duration=30) & Q(start_date__gte=now - timedelta(days=30))) |
+                 Q(Q(duration=60) & Q(start_date__gte=now - timedelta(days=60))) |
+                 Q(Q(duration=15) & Q(start_date__gte=now - timedelta(days=15))))
+        
+    def open(self):
+        return super().get_queryset().filter(self.q_open())
+
+    def real_price(self, price_gte=None, price_lte=None):
+        """
+        Fiter auctionss, that are still open, according to duration and starting date,
+        starting or current price is used, where possible.
+        """
+        query = self.q_open()
+        
+        if price_gte:
+            query &= Q(Q(Q(actual_price=0) & Q(starting_price__gte=price_gte)) |
+                       Q(~Q(actual_price=0) & Q(actual_price__gte=price_gte)))
+        if price_lte:
+            query &= Q(Q(Q(actual_price=0) & Q(starting_price__lte=price_lte)) |
+                       Q(~Q(actual_price=0) & Q(actual_price__lte=price_lte)))
+
+        return super().get_queryset().filter(query)
+
     
 def get_upload_to_path(instance, filename):
     path = f'{settings.UPLOADS_DIR}/auction_'
@@ -97,13 +119,23 @@ class Auction(models.Model):
                                        on_delete=models.SET_NULL,
                                        blank=True, null=True)
     objects = AuctionManager()
-
+    
     def get_upload_to_path(self, filename):
         path = f'{settings.UPLOADS_DIR}/auction_'
         path += f'{datetime.now().strftime("%Y_%m_%d")}_'
         path += f'{self.title_slug}_'
         return path + filename
 
+    def get_absolute_url(self):
+        return reverse('product_detail', args=[self.id])
+
+    @property
+    def real_price(self):
+        if self.actual_price == 0:
+            return self.starting_price
+        else:
+            return self.actual_price
+        
     @property
     def open_until(self):
         return self.start_date + timedelta(days=self.duration)

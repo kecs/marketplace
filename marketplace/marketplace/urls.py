@@ -19,11 +19,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from main_app.views import (LandingView, TOSView, SellView, AuctionListView,
-                            ProductDetailView, WatchView, LikeView, BidView)
+                            ProductDetailView, WatchView, LikeView, BidView,
+                            ProfileView)
 
 
 urlpatterns = [
-    path('i18n/', include('django.conf.urls.i18n')), #/i18n/setlang/
+    path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
     path('tos', TOSView.as_view(), name="tos"),
     path('sell', SellView.as_view(), name="sell"),
@@ -32,6 +33,7 @@ urlpatterns = [
     path('like/<int:pk>/', LikeView.as_view(), name="like"),
     path('bid/<int:pk>/', BidView.as_view(), name="bid"),
     path('search/', AuctionListView.as_view(), name="search"),
+    path('profile/', ProfileView.as_view(), name="profile"),
     path('', LandingView.as_view(), name='landing'),
 ]
 
