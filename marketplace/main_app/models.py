@@ -27,23 +27,23 @@ DURATION_CHOICES = (
 
 
 class AuctionManager(models.Manager):
-    def q_open(self):
+    def to_close(self):
         now = datetime.now()
-
-        # Still valid, according to duration
-        return Q(Q(Q(duration=30) & Q(start_date__gte=now - timedelta(days=30))) |
-                 Q(Q(duration=60) & Q(start_date__gte=now - timedelta(days=60))) |
-                 Q(Q(duration=15) & Q(start_date__gte=now - timedelta(days=15))))
+        query = Q(Q(Q(duration=30) & Q(start_date__lt=now - timedelta(days=30))) |
+                  Q(Q(duration=60) & Q(start_date__lt=now - timedelta(days=60))) |
+                  Q(Q(duration=15) & Q(start_date__lt=now - timedelta(days=15))))
+    
+        super().get_queryset().filter(query)
         
     def open(self):
-        return super().get_queryset().filter(self.q_open())
+        return super().get_queryset().filter(is_open=True)
 
     def real_price(self, price_gte=None, price_lte=None):
         """
         Fiter auctionss, that are still open, according to duration and starting date,
         starting or current price is used, where possible.
         """
-        query = self.q_open()
+        query = Q(is_open=True)
         
         if price_gte:
             query &= Q(Q(Q(actual_price=0) & Q(starting_price__gte=price_gte)) |
@@ -107,6 +107,7 @@ class Auction(models.Model):
     starting_price = models.PositiveIntegerField()
     actual_price = models.PositiveIntegerField(blank=True, null=True, default=0)
     start_date = models.DateField(auto_now_add=True)
+    is_open = models.BooleanField(blank=True, default=True)
     img1 = models.ImageField(upload_to=get_upload_to_path)
     img2 = models.ImageField(upload_to=get_upload_to_path, blank=True, null=True)
     img3 = models.ImageField(upload_to=get_upload_to_path, blank=True, null=True)
@@ -139,12 +140,6 @@ class Auction(models.Model):
     @property
     def open_until(self):
         return self.start_date + timedelta(days=self.duration)
-
-    @property
-    def is_open(self):
-        now = datetime.now().date()
-        end = self.start_date + timedelta(days=self.duration)
-        return end <= now
     
     @property
     def short_description(self):
