@@ -6,7 +6,9 @@
       <h3 class="mb-0">{{ item.title|capfirst }}</h3>
       <div class="mb-1 text-muted">{{ item.real_price }} Ft.&nbsp;&nbsp;&nbsp; {{ item.start_date }}</div>
       <p class="card-text mb-auto">{{ item.short_description }}</p>
+      {% if user.username %}
       <a href="{% url 'product_detail' pk=item.pk %}" class="stretched-link">{% trans "I am interested" %}!</a>
+      {% endif %}
     </div>
     <div class="col-auto d-none d-lg-block">
       <img alt="" src="/{{ item.img1.url }}" width=200 height=250 />

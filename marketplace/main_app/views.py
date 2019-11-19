@@ -127,7 +127,7 @@ class BidView(BaseMixin, View):
             return HttpResponseRedirect(reverse('landing'))
     
     
-class LandingView(LoginRequiredMixin, TemplateView):
+class LandingView(TemplateView):
     template_name = "landing.html"
 
     def get_context_data(self, **kwargs):

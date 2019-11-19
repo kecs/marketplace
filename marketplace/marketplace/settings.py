@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'crispy_forms',
     'django_extensions',
+    'django_celery_beat',
 
     'main_app.apps.MainAppConfig',
     
@@ -131,7 +132,15 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = ''
 
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'main_app.MarketplaceUser'
 UPLOADS_DIR = 'uploads'
 LANGUAGE_COOKIE_NAME = 'language'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    

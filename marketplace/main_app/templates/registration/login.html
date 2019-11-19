@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load extras %}
+{% load crispy_forms_tags %}
+
+<div class="jumbotron p-4 p-md-5 rounded bg-search">
+{% block "search" %}
+  <h1 class="display-5">{% trans "sign in"|capfirst %}</h1>
+  <div class="col-md-6 px-0">
+    <br/>
+    <br/>
+    <form method="post" action="{% url "login" %}">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button type="submit" class="btn btn-primary">{% trans "sign in"|capfirst %}</button>
+      
+    </form>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+
+  </div>
+</div>
+{% endblock "search" %}
+
+{% block "featured" %}
+{% endblock "featured" %}
+
+
