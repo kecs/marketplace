@@ -170,3 +170,14 @@ class ProfileView(LoginRequiredMixin, DetailView):
                 .filter(like__marketplaceuser=self.request.user)
         return context
 
+
+class Registrationiew(CreateView):
+    model = MarketplaceUser
+    template_name = 'registration/login.html'
+    fields = ['username', 'email', 'address', 'city', 'password']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['registration'] = True
+        return context
+

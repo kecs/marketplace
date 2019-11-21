@@ -20,12 +20,13 @@ from django.contrib import admin
 from django.urls import path, include
 from main_app.views import (LandingView, TOSView, SellView, AuctionListView,
                             ProductDetailView, WatchView, LikeView, BidView,
-                            ProfileView)
+                            ProfileView, Registrationiew)
 
 
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
+    path('accounts/register/', Registrationiew.as_view(), name="register"),
     path('accounts/', include('django.contrib.auth.urls')),
     path('tos', TOSView.as_view(), name="tos"),
     path('sell', SellView.as_view(), name="sell"),

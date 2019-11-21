@@ -33,7 +33,7 @@ class AuctionManager(models.Manager):
                   Q(Q(duration=60) & Q(start_date__lt=now - timedelta(days=60))) |
                   Q(Q(duration=15) & Q(start_date__lt=now - timedelta(days=15))))
     
-        super().get_queryset().filter(query)
+        return super().get_queryset().filter(query)
         
     def open(self):
         return super().get_queryset().filter(is_open=True)
@@ -60,6 +60,7 @@ def get_upload_to_path(instance, filename):
     path += f'{datetime.now().strftime("%Y_%m_%d")}_'
     path += f'{instance.title_slug}_'
     return path + filename
+
 
 # Models
 

@@ -4,15 +4,26 @@
 {% load crispy_forms_tags %}
 
 <div class="jumbotron p-4 p-md-5 rounded bg-search">
-{% block "search" %}
+  {% block "search" %}
+  <br/>
+  <br/>
+  <br/>
+  {% if registration %}
+  <h1 class="display-5">{% trans "sign up"|capfirst %}</h1>
+  {% else %}
   <h1 class="display-5">{% trans "sign in"|capfirst %}</h1>
+  {% endif %}
   <div class="col-md-6 px-0">
     <br/>
     <br/>
     <form method="post" action="{% url "login" %}">
       {% csrf_token %}
       {{ form|crispy }}
+      {% if registration %}
+      <button type="submit" class="btn btn-primary">{% trans "sign up"|capfirst %}</button>
+      {% else %}
       <button type="submit" class="btn btn-primary">{% trans "sign in"|capfirst %}</button>
+      {% endif %}
       
     </form>
     <br/>

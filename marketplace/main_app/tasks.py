@@ -10,6 +10,10 @@ from .models import Auction
 def close_auctions():
     # Auctions that should be closed, but are still open
     objects = Auction.objects.to_close().filter(is_open=True)
+
+    if not len(objects):
+        return
+    
     objects.update(is_open=False)
     
     for auction in objects:
