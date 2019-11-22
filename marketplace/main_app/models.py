@@ -72,7 +72,6 @@ class City(models.Model):
 
     
 class MarketplaceUser(AbstractUser):
-    address = models.CharField(max_length=512)
     did_accept_tos = models.BooleanField(default=False, blank=True)
     member_since = models.DateField(auto_now_add=True)
     address = models.CharField(max_length=1024)
