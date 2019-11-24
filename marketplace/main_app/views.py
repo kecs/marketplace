@@ -171,7 +171,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
         return context
 
 
-class Registrationiew(CreateView):
+class RegistrationView(CreateView):
     model = MarketplaceUser
     template_name = 'registration/login.html'
     fields = ['username', 'email', 'address', 'city', 'password']

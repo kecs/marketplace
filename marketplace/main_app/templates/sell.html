@@ -6,10 +6,10 @@
 {% block "search" %}
 <div class="jumbotron p-4 p-md-5 text-white rounded bg-search text-dark">
   <div class="col-md-6 px-0">
-    <p class="display-5">{% trans "Describe the item you are selling" %}!</p>
+    <p class="display-5">{% trans "describe the item you are selling"|capfirst %}!</p>
     <form enctype="multipart/form-data" method="post">{% csrf_token %}
       {{ form|crispy }}
-      <button type="submit" class="btn btn-success">{% trans "Sell item" %}!</button>
+      <button type="submit" class="btn btn-success">{% trans "sell item"|capfirst %}!</button>
     </form>
     <p class="lead mb-0"><a href="/" class="font-weight-bold">Back</a></p>
   </div>

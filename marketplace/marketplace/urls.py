@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import path, include
 from main_app.views import (LandingView, TOSView, SellView, AuctionListView,
                             ProductDetailView, WatchView, LikeView, BidView,
-                            ProfileView, Registrationiew)
+                            ProfileView, RegistrationView)
 
 
 urlpatterns = [

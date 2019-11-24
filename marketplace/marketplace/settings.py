@@ -156,7 +156,8 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = '/tmp/marketplace-messages'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     
