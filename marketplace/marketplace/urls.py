@@ -26,7 +26,7 @@ from main_app.views import (LandingView, TOSView, SellView, AuctionListView,
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
-    path('accounts/register/', Registrationiew.as_view(), name="register"),
+    path('accounts/register/', RegistrationView.as_view(), name="register"),
     path('accounts/', include('django.contrib.auth.urls')),
     path('tos', TOSView.as_view(), name="tos"),
     path('sell', SellView.as_view(), name="sell"),
